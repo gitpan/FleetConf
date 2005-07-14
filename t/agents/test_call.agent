@@ -1,0 +1,9 @@
+#!fleetconf-agent
+
+NAME		Test-Call-Agent
+DESCRIPTION	Simple test for CALL.
+VERSION		$Rev: 1504 $
+MNEMONIC	test
+WORKFLOW	Null
+
+CALL test_call()

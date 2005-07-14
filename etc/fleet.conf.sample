@@ -1,0 +1,30 @@
+agent_include [
+	agents 
+]
+plugin_include [ 
+	plugins 
+]
+
+globals {
+	master_path = /common/admin/FleetConf
+	local_path = /usr/local
+}
+
+safe_path [
+	/bin
+	/usr/bin
+	/usr/local/bin
+	scripts
+]
+
+workflows {
+	RT {
+		class = FleetConf::Workflow::RT
+		args {
+			proxy = https://support.cis.ksu.edu/cgi-bin/rt.cgi
+			query = Queue='AcctMgr' AND (Status='new' OR Status='open')
+			ssl_client_certificate = "$FleetConf::globals{conf_dir}/ssl/client/rt-workflow.crt"
+			ssl_client_key = "$FleetConf:globals{conf_dir}/ssl/client/rt-workflow.key"
+		}
+	}
+}

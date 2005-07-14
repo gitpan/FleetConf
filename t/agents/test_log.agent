@@ -1,0 +1,16 @@
+#!fleetconf-agent
+
+NAME		Test-Log-Agent
+DESCRIPTION	Simple test for LOG.
+VERSION		$Rev: 1510 $
+MNEMONIC	test
+WORKFLOW	Null
+
+LOG DEBUG ok 1
+LOG INFO ok 2
+LOG NOTICE ok 3
+LOG WARNING ok 4
+LOG ERROR ok 5
+LOG CRITICAL ok 6
+LOG ALERT ok 7
+LOG EMERGENCY ok 8

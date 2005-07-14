@@ -1,0 +1,9 @@
+#!fleetconf-agent
+
+NAME		Test-Echo-Agent
+DESCRIPTION	Simple test for ECHO.
+VERSION		$Rev: 1504 $
+MNEMONIC	test
+WORKFLOW	Null
+
+ECHO ok 1

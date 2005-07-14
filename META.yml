@@ -1,0 +1,75 @@
+---
+name: FleetConf
+version: 0.01_012
+author:
+  - 'Andrew Sterling Hanenkamp, E<lt>hanenkamp@users.sourceforge.netE<gt>'
+abstract: 'An multi-agent, configuration management tool'
+license: perl
+requires:
+  Log::Dispatch: 2.10
+  YAML: 0.39
+provides:
+  FleetConf:
+    file: lib/FleetConf.pm
+    version: 0.01_012
+  FleetConf::Agent:
+    file: lib/FleetConf/Agent.pm
+    version: 0.07
+  FleetConf::Agent::Context:
+    file: lib/FleetConf/Agent/Context.pm
+    version: 0.05
+  FleetConf::Agent::Parser:
+    file: lib/FleetConf/Agent/Parser.pm
+    version: 0.07
+  FleetConf::Agent::Parser::AND:
+    file: lib/FleetConf/Agent/Parser.pm
+    version: 0.07
+  FleetConf::Agent::Parser::BOOL:
+    file: lib/FleetConf/Agent/Parser.pm
+    version: 0.07
+  FleetConf::Agent::Parser::CALL:
+    file: lib/FleetConf/Agent/Parser.pm
+    version: 0.07
+  FleetConf::Agent::Parser::COMPARISON:
+    file: lib/FleetConf/Agent/Parser.pm
+    version: 0.07
+  FleetConf::Agent::Parser::IN:
+    file: lib/FleetConf/Agent/Parser.pm
+    version: 0.07
+  FleetConf::Agent::Parser::LIST:
+    file: lib/FleetConf/Agent/Parser.pm
+    version: 0.07
+  FleetConf::Agent::Parser::LOOKUP:
+    file: lib/FleetConf/Agent/Parser.pm
+    version: 0.07
+  FleetConf::Agent::Parser::MATCHES:
+    file: lib/FleetConf/Agent/Parser.pm
+    version: 0.07
+  FleetConf::Agent::Parser::NOT:
+    file: lib/FleetConf/Agent/Parser.pm
+    version: 0.07
+  FleetConf::Agent::Parser::OR:
+    file: lib/FleetConf/Agent/Parser.pm
+    version: 0.07
+  FleetConf::Agent::Parser::REGEX:
+    file: lib/FleetConf/Agent/Parser.pm
+    version: 0.07
+  FleetConf::Agent::Parser::SCALAR:
+    file: lib/FleetConf/Agent/Parser.pm
+    version: 0.07
+  FleetConf::Agent::Parser::expression:
+    file: lib/FleetConf/Agent/Parser.pm
+    version: 0.07
+  FleetConf::Conf:
+    file: lib/FleetConf/Conf.pm
+    version: 0.02
+  FleetConf::Log:
+    file: lib/FleetConf/Log.pm
+    version: 0.02
+  FleetConf::Log::Workflow:
+    file: lib/FleetConf/Log.pm
+    version: 0.02
+  FleetConf::Workflow::Null:
+    file: lib/FleetConf/Workflow/Null.pm
+    version: 0.03
+generated_by: Module::Build version 0.261

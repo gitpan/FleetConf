@@ -1,0 +1,15 @@
+#!fleetconf-agent
+
+NAME		Update-Agent
+DESCRIPTION	This agent is responsible for installing FleetConf locally from a remote location.
+VERSION		$Rev$
+MNEMONIC	update
+WORKFLOW	Null
+
+WHEN OS() = "MSWin32" DO
+	EXEC_COMMAND robocopy.exe "${win32_master_path}" "${win32_local_path}" /E /PURGE
+END
+
+WHEN OS() <> "MSWin32" DO
+	EXEC_COMMAND rsync -a --delete "${master_path}" "${local_path}"
+END

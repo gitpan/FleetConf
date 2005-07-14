@@ -1,0 +1,11 @@
+#!fleetconf-agent
+
+NAME		Test-Foreach-Agent
+DESCRIPTION	Simple test for FOREACH.
+VERSION		$Rev: 1504 $
+MNEMONIC	test
+WORKFLOW	Null
+
+FOREACH foo IN [ 1, 2, 3, 4, 5 ] DO
+	ECHO ok ${foo}
+END

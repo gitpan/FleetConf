@@ -1,0 +1,10 @@
+#!fleetconf-agent
+
+NAME		Test-Require-Agent
+DESCRIPTION	Simple test for REQUIRE.
+VERSION		$Rev: 1504 $
+MNEMONIC	test
+WORKFLOW	Null
+
+REQUIRE foo = 1
+REQUIRE bar = 2

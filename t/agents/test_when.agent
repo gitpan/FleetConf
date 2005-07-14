@@ -1,0 +1,23 @@
+#!fleetconf-agent
+
+NAME		Test-When-Agent
+DESCRIPTION	Simple test for WHEN.
+VERSION		$Rev: 1510 $
+MNEMONIC	test
+WORKFLOW	Null
+
+WHEN foo = 1 DO
+	ECHO ok 1
+END
+
+WHEN foo <> 1 DO
+	ECHO not ok 1
+END
+
+WHEN defined(bar) DO
+	ECHO not ok 2
+END
+
+WHEN NOT defined(bar) DO
+	ECHO ok 2
+END

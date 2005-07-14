@@ -1,0 +1,394 @@
+#!fleetconf-agent
+
+NAME		Test-Functions-Agent
+DESCRIPTION	Simple test for plugin functions.
+VERSION		$Rev: 1507 $
+MNEMONIC	test
+WORKFLOW	Null
+
+# Test IsReadable()
+# TODO
+# Test IsWritable()
+# TODO
+# Test IsExecutable()
+# TODO
+# Test IsOwned()
+# TODO
+# Test IsReallyReadable()
+# TODO
+# Test IsReallyWritable()
+# TODO
+# Test IsReallyExecutable()
+# TODO
+# Test IsReallyOwned()
+# TODO
+# Test IsPathExists()
+# TODO
+# Test IsEmpty()
+# TODO
+# Test IsNonEmpty()
+# TODO
+# Test FileSize()
+# TODO
+# Test IsFile()
+# TODO
+# Test IsDir()
+# TODO
+# Test IsSymLink()
+# TODO
+# Test IsPipe()
+# TODO
+# Test IsSocket()
+# TODO
+# Test IsBlockSpecial()
+# TODO
+# Test IsCharSpecial()
+# TODO
+# Test IsTTY()
+# TODO
+# Test IsSetUID()
+# TODO
+# Test IsSetGID()
+# TODO
+# Test IsSticky()
+# TODO
+# Test IsASCII()
+# TODO
+# Test IsBinary()
+# TODO
+# Test ModificationDays()
+# TODO
+# Test AccessDays()
+# TODO
+# Test ChangeDays()
+# TODO
+# Test abs()
+# TODO
+# Test atan2()
+# TODO
+# Test chomp()
+# TODO
+# Test chop()
+# TODO
+
+# Test chr()
+SET chr_is_Z = chr(90)
+
+WHEN chr_is_Z = "Z" DO
+	ECHO ok 1
+END
+
+WHEN chr_is_Z <> "Z" DO
+	ECHO not ok 1
+	LOG ERROR Expected "Z" from chr(90), but got "${chr_is_Z}" instead.
+END
+
+# Test cos()
+# TODO
+
+# Test crypt()
+SET crypt_is_teslD5ShqjYdQ = crypt("testing", "testing")
+
+WHEN crypt_is_teslD5ShqjYdQ = "teslD5ShqjYdQ" DO
+	ECHO ok 2
+END
+
+WHEN crypt_is_teslD5ShqjYdQ <> "teslD5ShqjYdQ" DO
+	ECHO not ok 2
+	LOG ERROR Expected "teslD6ShqjYdQ" from crypt("testing", "testing", but got "${crypt_is_teslD5ShqjYdQ}" instead.
+END
+
+# Test defined()
+SET yes_defined = defined(foo)
+SET not_defined = defined(bar)
+
+WHEN yes_defined DO
+	ECHO ok 3
+END
+
+WHEN NOT yes_defined DO
+	ECHO not ok 3
+	LOG ERROR Expected TRUE from defined(foo), but got "${yes_defined}" instead.
+END
+
+WHEN not_defined DO
+	ECHO not ok 4
+	LOG ERROR Expected FALSE from defined(bar), but got "${not_defined}" instead.
+END
+
+WHEN NOT not_defined DO
+	ECHO ok 4
+END
+
+# Test exp()
+# TODO
+# Test getpgrp()
+# TODO
+# Test getppid()
+# TODO
+# Test getpriority()
+# TODO
+# Test getpwnam()
+# TODO
+# Test getgrnam()
+# TODO
+# Test gethostbyname()
+# TODO
+# Test getprotobyname()
+# TODO
+# Test getpwuid()
+# TODO
+# Test getgrgid()
+# TODO
+# Test getservbyname()
+# TODO
+# Test gethostbyaddr()
+# TODO
+# Test getnetbyaddr()
+# TODO
+# Test getprotobynumber()
+# TODO
+# Test getservbyport()
+# TODO
+# Test glob()
+# TODO
+# Test gmtime()
+# TODO
+# Test grep()
+# TODO
+
+# Test hex()
+SET hex_is_twenty_one = hex("0x15")
+
+WHEN hex_is_twenty_one = 21 DO
+	ECHO ok 5
+END
+
+WHEN hex_is_twenty_one <> 21 DO
+	ECHO not ok 5
+	LOG ERROR Expected "21" from hex("0x15"), but got "${hex_is_twenty_one}" instead.
+END
+
+# Test index()
+SET index_is_four = index("Hello World!", "o")
+SET index_is_seven = index("Hello World!", "o", 5)
+
+WHEN index_is_four = 4 DO
+	ECHO ok 6
+END
+
+WHEN index_is_four <> 4 DO
+	ECHO not ok 6
+	LOG ERROR Expected "4" from index("Hello World!", "o"), but got "${index_is_four}" instead.
+END
+
+WHEN index_is_seven = 7 DO
+	ECHO ok 7
+END
+
+WHEN index_is_seven <> 7 DO
+	ECHO not ok 7
+	LOG ERROR Expected "7" from index("Hello World!", "o", 5), but got "${index_is_seven}" instead.
+END
+
+# Test int()
+SET int_is_forty_two = int("42.174895")
+
+WHEN int_is_forty_two = 42 DO
+	ECHO ok 8
+END
+
+WHEN int_is_forty_two <> 42 DO
+	ECHO not ok 8
+	LOG ERROR Expected "42" from int("42.174895"), but got "${int_is_forty_two}" instead.
+END
+
+# Test join()
+# TODO
+
+# Test lc()
+SET lc_is_hello = lc("HeLLo")
+
+WHEN lc_is_hello = "hello" DO
+	ECHO ok 9
+END
+
+WHEN lc_is_hello <> "hello" DO
+	ECHO not ok 9
+	LOG ERROR Expected "hello" from lc("HeLLo"), but got "${lc_is_hello}" instead.
+END
+
+# Test lowercase()
+SET lowercase_is_hello = lowercase("HeLLo")
+
+WHEN lowercase_is_hello = "hello" DO
+	ECHO ok 10
+END
+
+WHEN lowercase_is_hello <> "hello" DO
+	ECHO not ok 10
+	LOG ERROR Expected "hello" from lowercase("HeLLo"), but got "${lowercase_is_hello}" intead.
+END
+
+# Test lcfirst()
+SET lcfirst_is_hello = lcfirst("HeLLo")
+
+WHEN lcfirst_is_hello = "heLLo" DO
+	ECHO ok 11
+END
+
+WHEN lcfirst_is_hello <> "heLLo" DO
+	ECHO not ok 11
+	LOG ERROR Expected "heLLo" from lcfirst("heLLo"), but got "${lcfirst_is_hello}" instead.
+END
+
+# Test length()
+SET length_is_five = length("hello")
+
+WHEN length_is_five = 5 DO
+	ECHO ok 12
+END
+
+WHEN length_is_five <> 5 DO
+	ECHO not ok 12
+	LOG ERROR Expected "5" from length("hello"), but got "${length_is_five}" instead.
+END
+
+# Test log()
+# TODO
+# Test lstat()
+# TODO
+
+# Test oct()
+SET oct_is_five_eleven = oct("0777")
+
+WHEN oct_is_five_eleven = 511 DO
+	ECHO ok 13
+END
+
+WHEN oct_is_five_eleven <> 511 DO
+	ECHO not ok 13
+	LOG ERROR Expected "511" from oct("0777"), but got "${oct_is_five_eleven}" instead.
+END
+
+# Test ord()
+SET ord_is_ninety = ord("Z")
+
+WHEN ord_is_ninety = 90 DO
+	ECHO ok 14
+END
+
+WHEN ord_is_ninety <> 90 DO
+	ECHO not ok 14
+	LOG ERROR Expected "90" from ord("Z"), but got "${ord_is_ninety}" instead.
+END
+
+# Test pack()
+# TODO
+# Test pop()
+# TODO
+# Test push()
+# TODO
+# Test quotameta()
+# TODO
+# Test rand()
+# TODO
+
+# Test replace()
+SET replace_is_cello = replace("hello", "^h", "c")
+
+WHEN replace_is_cello = "cello" DO
+	ECHO ok 15
+END
+
+WHEN replace_is_cello <> "cello" DO
+	ECHO not ok 15
+	LOG ERROR Expected "cello" from replace("hello", "^h", "c"), but got "${replace_is_cello}" instead.
+END
+
+# Test reverse()
+# TODO
+# Test rindex()
+# TODO
+
+# Test scalar()
+SET scalar_is_five = scalar(["a","b","c","d","e"])
+
+WHEN scalar_is_five = 5 DO
+	ECHO ok 16
+END
+
+WHEN scalar_is_five <> 5 DO
+	ECHO not ok 16
+	LOG ERROR Expected "5" from scalar(["a","b","c","d","e"]), but got "${scalar_is_five}" instead.
+END
+
+# Test size()
+SET size_undef_is_zero = size()
+SET size_is_zero = size([])
+SET size_is_five = size(["a","b","c","d","e"])
+
+WHEN size_undef_is_zero = 0 DO
+	ECHO ok 17
+END
+
+WHEN size_undef_is_zero <> 0 DO
+	ECHO not ok 17
+	LOG ERROR Expected "0" from size(), but got "${size_undef_is_zero}" instead.
+END
+
+WHEN size_is_zero = 0 DO
+	ECHO ok 18
+END
+
+WHEN size_is_zero <> 0 DO
+	ECHO not ok 18
+	LOG ERROR Expected "0" from size([]), but got "${size_is_zero}" instead.
+END
+
+WHEN size_is_five = 5 DO
+	ECHO ok 19
+END
+
+WHEN size_is_five <> 5 DO
+	ECHO not ok 19
+	LOG ERROR Expected "5" from size(["a","b","c","d","e"]), but got "${scalar_is_five}" instead.
+END
+
+
+# Test shift()
+# TODO
+# Test sin()
+# TODO
+# Test sort()
+# TODO
+# Test splice()
+# TODO
+# Test split()
+# TODO
+# Test sprintf()
+# TODO
+# Test sqrt()
+# TODO
+# Test srand()
+# TODO
+# Test stat()
+# TODO
+# Test substr()
+# TODO
+# Test time()
+# TODO
+# Test times()
+# TODO
+# Test uc()
+# TODO
+# Test uppercase()
+# TODO
+# Test ucfirst()
+# TODO
+# Test unpack()
+# TODO
+# Test unshift()
+# TODO
+# Test OS()
+# TODO

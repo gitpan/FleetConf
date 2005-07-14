@@ -1,0 +1,10 @@
+#!fleetconf-agent
+
+NAME		Test-Check-Agent
+DESCRIPTION	Simple test for CHECK.
+VERSION		$Rev: 1504 $
+MNEMONIC	test
+WORKFLOW	Null
+
+CHECK foo = 1
+CHECK bar = 2

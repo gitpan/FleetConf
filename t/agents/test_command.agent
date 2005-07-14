@@ -1,0 +1,28 @@
+#!fleetconf-agent
+
+NAME		Test-Command-Agent
+DESCRIPTION	Simple test for COMMAND and relatives.
+VERSION		$Rev: 1504 $
+MNEMONIC	test
+WORKFLOW	Null
+
+COMMAND echo.pl foo
+EXEC
+
+EXEC_COMMAND echo.pl bar
+
+COMMAND echo.pl 
+OPTION baz
+EXEC
+
+COMMAND echo.pl
+OPTION quux
+EXEC_IF_OPTION
+
+COMMAND echo.pl
+OPTION_IF (FALSE) quuux
+EXEC_IF_OPTION
+
+COMMAND echo.pl
+OPTION_IF (TRUE) quuuux
+EXEC_IF_OPTION

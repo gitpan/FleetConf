@@ -1,0 +1,10 @@
+#!fleetconf-agent
+
+NAME		Test-Prerequisite-Agent
+DESCRIPTION	Simple test for PREREQUISITE.
+VERSION		$Rev: 1510 $
+MNEMONIC	test
+WORKFLOW	Null
+
+PREREQUISITE TRUE
+PREREQUISITE FALSE

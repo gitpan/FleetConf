@@ -1,0 +1,58 @@
+#!fleetconf-agent
+
+NAME		Test-Set-Agent
+DESCRIPTION	Simple test for SET.
+VERSION		$Rev: 1504 $
+MNEMONIC	test
+WORKFLOW	Null
+
+PREREQUISITE_SET first = 1
+REQUIRE_SET second = 2
+CHECK_SET third = 3
+
+PREREQUISITE first = 1
+REQUIRE second = 2
+CHECK third = 3
+
+SET foo = 2
+SET bar = 3
+
+WHEN foo = 2 DO
+	ECHO ok 1
+END
+
+WHEN foo <> 2 DO
+	ECHO not ok 1
+END
+
+WHEN bar = 3 DO
+	ECHO ok 2
+END
+
+WHEN bar <> 3 DO
+	ECHO not ok 2
+END
+
+WHEN first = 1 DO
+	ECHO ok 3
+END
+
+WHEN first <> 1 DO
+	ECHO not ok 3
+END
+
+WHEN second = 2 DO
+	ECHO ok 4
+END
+
+WHEN second <> 2 DO
+	ECHO not ok 4
+END
+
+WHEN third = 3 DO
+	ECHO ok 5
+END
+
+WHEN third <> 3 DO
+	ECHO not ok 5
+END

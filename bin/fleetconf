@@ -1,0 +1,156 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+our $VERSION = '0.05';
+
+my $root;
+BEGIN {
+	use Cwd ();
+	use File::Basename ();
+	use File::Spec;
+
+	my $script = $0;
+	foreach ( (File::Spec->path, Cwd::getcwd) ) {
+		my $tmp = File::Spec->catfile($_, $0);
+		$script = $tmp if -f $tmp;
+	}
+	
+	chomp $script;
+	$root = File::Spec->catdir(
+		File::Basename::dirname($script),
+		File::Spec->updir,
+	);
+	push @INC, File::Spec->catdir($root, "lib");
+}
+
+use FleetConf;
+use Getopt::Long;
+use Pod::Usage;
+
+$FleetConf::fleetconf_root = $root;
+
+my @agents;
+my @files;
+my $compile_only = 0;
+my $man  = 0;
+my $help = 0;
+
+GetOptions(
+	'agent=s'		=> \@agents,
+	'file=s'		=> \@files,
+	'compile-only'	=> \$compile_only,
+	'no-warnings'	=> \$FleetConf::no_warnings,
+	'verbose+'		=> \$FleetConf::verbose,
+	'pretend'		=> \$FleetConf::pretend,
+	'root=s'		=> \$FleetConf::fleetconf_root,
+	'help|?'		=> \$help,
+	'man'			=> \$man,
+);
+
+pod2usage(1) if $help;
+pod2usage(-exitstatus => 0, -verbose => 2) if $man;
+
+if ($0 =~ /fleetconf-agent$/) {
+	unshift @files, File::Basename::basename($0);
+}
+
+my $fleetconf = FleetConf->instance;
+
+my @selectors;
+for my $file (@files) {
+	push @selectors, sub { shift->header('filename') eq File::Basename::basename($file) };
+}
+for my $agent (@agents) {
+	push @selectors, sub { shift->header('name') eq $agent };
+}
+
+unless ($compile_only) {
+	$fleetconf->select_agents(@selectors);
+
+	$fleetconf->run_agents;
+}
+
+exit 0;
+
+__END__
+
+=head1 NAME
+
+fleetconf - Front-end for the FleetConf system
+
+=head1 SYNOPSIS
+
+  fleetconf [options]
+
+  Options:
+    --agent <name>, -a <name>     Use only the named agent(s).
+    --file <name>, -f <name>      Use only the named agent file(s).
+    --compile-only, -c            Test agent compilation, but don't run.
+    --no-warnings                 Turn warnings off.
+    --verbose, -v                 Increase verbosity.
+    --pretend, -p                 Only pretend to do work (USE CAREFULLY!)
+    --root <dir>, -r <dir>        Use a specific directory as server root.
+    --help, -h, -?                Display help about this program.
+	--man                         Display the program manual.
+
+=head1 DESCRIPTION
+
+For details about what FleetConf does, see L<FleetConf>.
+
+Here's a detailed description of each of the options:
+
+=over
+
+=item --agent <name>, -a <name>
+
+This option may be specified multiple times to name more than one agent to run. If this option is given, only the agents matching the given names exactly will be run. (That is, the "NAME" given in the agent file header.) This option may be combined with C<--file>.
+
+If this option is not given (and C<--file> is also not), then all agents that are found will be run.
+
+=item --file <name>, -f <name>
+
+This option may be specified multiple times to name more than one agent to run. If this option is given, only the agents matching the given file names exactly will be run. This option may be combined with C<--agent>.
+
+If this option is not given (and C<--agent> is also not), then all agents that are found will be run.
+
+=item --compile-only, -c
+
+This option tells the script not to run the agents. Instead, the agents will be compiled and all plugins loaded, but no other work will be performed.
+
+=item --no-warnings
+
+This option tells the system to ignore warnings and not to print them. If C<--verbose> or C<--pretend> is specified, this option has no meaning.
+
+=item --verbose, -v
+
+This option tells the system to increase the verbosity of output. The option may be given multiple times to make greater increases. Generally, giving this option once will show notices, twice info, and three times debug. Four or more times may include even more debugging information.
+
+=item --pretend, -p
+
+This option tells the system to pretend to do the work, but actually do nothing.
+
+B<CAVEAT:> It is the responsibility of any plugin writers to make sure that all potential actions do nothing when pretend is set (see L<FleetConf> for documentation of C<$pretend> if you are writing plugins). If the plugin author does not pay attention to this flag, then changes will be made!
+
+=item --root <dir>, -r <dir>
+
+This specifies the FleetConf root directory. Normally, this is determined automatically by checking how the script was executed. However, if it is desireable to use a different root, this option sets it.
+
+=back
+
+=head1 SEE ALSO
+
+L<FleetConf>
+
+=head1 AUTHOR
+
+Andrew Sterling Hanenkamp, E<lt>hanenkamp@users.sourceforge.netE<gt>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2005 Andrew Sterling Hanenkamp. All Rights Reserved.
+
+FleetConf is distributed and licensed under the same terms as Perl itself.
+
+=cut
