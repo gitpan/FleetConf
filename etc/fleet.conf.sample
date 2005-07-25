@@ -1,6 +1,9 @@
 agent_include [
 	agents 
 ]
+perl_include [
+	extralib
+]
 plugin_include [ 
 	plugins 
 ]

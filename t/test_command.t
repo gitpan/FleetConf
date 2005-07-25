@@ -6,6 +6,8 @@ use FleetConf;
 use Log::Dispatch::Handle;
 use Test::More tests => 18;
 
+-x 't/scripts/echo.pl' or chmod 0755, 't/scripts/echo.pl';
+
 {
 	package MyLogger;
 

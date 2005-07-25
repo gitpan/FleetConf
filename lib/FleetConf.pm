@@ -16,7 +16,7 @@ use Log::Dispatch;
 use Log::Dispatch::File;
 use Log::Dispatch::Screen;
 
-our $VERSION = '0.01_012';
+our $VERSION = '0.01_014';
 
 =head1 NAME
 
@@ -302,6 +302,16 @@ sub _load_configuration {
 		$flog->would_log('debug') &&
 			$flog->debug(Data::Dumper->Dump([\%globals],['globals']));
 	}
+
+	if (defined $self->{conf}{perl_include}) {
+		my @dirs = 
+			map { File::Spec->file_name_is_absolute($_) ? $_ : File::Spec->catfile($fleetconf_root, $_) } 
+			@{ $self->{conf}{perl_include} };
+
+		for my $dir (@dirs) {
+			-d $dir && push @INC, $dir;
+		}
+	}
 }
 
 sub _load_plugins {
@@ -318,7 +328,7 @@ sub _load_plugins {
 
 	find($want, 
 		grep { -d $_ }
-		map { /^\// ? $_ : "$fleetconf_root/$_" } 
+		map { File::Spec->file_name_is_absolute($_) ? $_ : File::Spec->catfile($fleetconf_root, $_) } 
 			@{ $self->{conf}{plugin_include} });
 
 	for my $file (@files) {

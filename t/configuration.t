@@ -8,6 +8,7 @@ use Test::More tests => 3;
 
 my $expect_conf = {
 	agent_include => [ 'agents' ],
+	perl_include => [ 'extralib' ],
 	plugin_include => [ 'plugins', '../blib/plugins' ],
 	safe_path => [ 'scripts' ],
 	globals => { foo => 1 },

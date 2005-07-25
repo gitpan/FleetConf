@@ -5,35 +5,35 @@ use File::Spec;
 our $VERSION = '0.03';
 
 sub ReplyToTicket {
-	my $rt = shift;
-	my $id = shift;
-	my $file = shift;
-	my $vars = shift;
+	my $rt   = shift;
+	my $this = shift;
+	my $text = shift;
+
+	my $id = $this->get('id');
 
 	my $log = FleetConf::Log->get_logger("FleetConf::Commands::ReplyToTicket");
 
-	unless (File::Spec->file_name_is_absolute) {
-		$file = File::Spec->catfile(
-			$FleetConf::fleetconf_root, $file
-		);
-	}
+	if (ref($text)) {
+		$text = $$text;
+	} else {
+		my $file = $text;
 
-	unless (open TMPL, $file) {
-		$log->error("Cannot open $file for correspondance with ticket #$id: $!");
-		return 0;
-	}
-
-	my $message = join '', <TMPL>;
-	close TMPL;
-
-	if (defined $vars) {
-		for my $key (keys %$vars) {
-			my $escaped = $vars->{$key};
-			$escaped =~ s/%/%%/g;
-			$message =~ s/(?<!\%)\%$key\%/$escaped/g;
+		unless (File::Spec->file_name_is_absolute) {
+			$file = File::Spec->catfile(
+				$FleetConf::fleetconf_root, $file
+			);
 		}
-		$message =~ s/%%/%/g;
+
+		unless (open TMPL, $file) {
+			$log->error("Cannot open $file for correspondance with ticket #$id: $!");
+			return 0;
+		}
+
+		$text = join '', <TMPL>;
+		close TMPL;
 	}
+
+	$text =~ s/(?<!\%)\%([^%]+)\%/$this->get($1)||''/ge;
 
 	if ($FleetConf::pretend) {
 		$log->notice("Would Reply to #$id: \n$message");
@@ -43,7 +43,7 @@ sub ReplyToTicket {
 	my $result = $rt->updateTicket(
 		id          => $id,
 		UpdateType  => 'reply',
-		MimeMessage => $message,
+		MimeMessage => $text,
 	)->result;
 
 	if ($result->{status}) {
@@ -66,18 +66,18 @@ sub ResolveTicket {
 		return 1;
 	}
 
-	my $result = $rt->modifyTicket(
+	my @results = $rt->modifyTicket(
 		id => $id,
 		Status => 'resolved',
 	)->result;
 
-	if ($result->{status}) {
-		$log->notice("Status Message from Resolve of #$id: $result->{message}");
+	if ($result[0]{status}) {
+		$log->notice("Status Message from Resolve of #$id: $result[0]{message}");
 	} else {
-		$log->error("Error during Resolve of #$id: $result->{message}");
+		$log->error("Error during Resolve of #$id: $result[0]{message}");
 	}
 
-	return $result->{status};
+	return $result[0]{status};
 }
 
 sub ApproveTicket {

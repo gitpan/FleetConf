@@ -10,6 +10,7 @@ lib/FleetConf/Agent/Parser.pm
 lib/FleetConf/Conf.pm
 lib/FleetConf/Log.pm
 lib/FleetConf/Workflow/Null.pm
+Makefile.PL
 MANIFEST			This list of files
 META.yml
 plugins/basic.pl
@@ -27,6 +28,7 @@ plugins/FleetConf/Agent/Parser/Stmt/WHEN.pm
 plugins/FleetConf/Workflow/RT.pm
 plugins/network.pl
 plugins/rt.pl
+README
 t/agents/test_call.agent
 t/agents/test_check.agent
 t/agents/test_command.agent
@@ -40,8 +42,10 @@ t/agents/test_set.agent
 t/agents/test_when.agent
 t/configuration.t
 t/etc/fleet.conf
+t/extralib/Baz.pm
 t/log.t
 t/no_root.t
+t/perl_include.t
 t/plugins/test_call.pl
 t/plugins/test_when.pl
 t/scripts/echo.pl
@@ -56,5 +60,3 @@ t/test_prerequisite.t
 t/test_require.t
 t/test_set.t
 t/test_when.t
-Makefile.PL
-README
