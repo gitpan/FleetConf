@@ -16,7 +16,7 @@ use Log::Dispatch;
 use Log::Dispatch::File;
 use Log::Dispatch::Screen;
 
-our $VERSION = '0.01_014';
+our $VERSION = '0.01_015';
 
 =head1 NAME
 

@@ -197,14 +197,18 @@ list_expression:	variable
 						}, 'FleetConf::Agent::Parser::LIST'
 					}
 
-string:				/"((?:[^"]|\\")*)"/ { $return = $1; 1 }
+string:				/"([^\\"]*(?:\\.[^\\"]*)*)"/
+					{	my $str = $1;
+						$str =~ s/\\(.)/$1/g;
+						$return = $str; 1 }
 
 number:				/[+-]?[0-9]+/
 
-regular_expression:	/\/((?:[^\/]|\\\/)*)\/([ims]*)/
-					{	$return = bless {
-							pattern   => $1,
-							modifiers => $2,
+regular_expression:	m{/([^\\/]*(?:\\.[^\\/]*)*)/([imsx]*)}
+					{	my ($match, $mod) = ($1, $2);
+						$return = bless {
+							pattern   => $match,
+							modifiers => $mod,
 						}, 'FleetConf::Agent::Parser::REGEX'
 					}
 
@@ -468,7 +472,7 @@ sub eval {
 	my $self    = shift;
 	my $ctx     = shift;
 
-	return qr/(?$self->{modifiers})$self->{pattern}/;
+	return qr/(?$self->{modifiers}:$self->{pattern})/;
 }
 
 package FleetConf::Agent::Parser::BOOL;

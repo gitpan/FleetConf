@@ -51,7 +51,7 @@ This is a very simple configuration file parser. I've invented a custom format b
 
 =cut
 
-my $grammar = q(
+my $grammar = <<'EOGRAMMAR';
 
 FleetConf_configuration: 
 		entries EOF
@@ -111,22 +111,16 @@ VALUE:
 			$return = $item[1]; 1 }
 
 QUOTED_STRING:
-		/"(?:[^"]|\\\\")*"/
-		{	$item[1] =~ s/^"//;
-			$item[1] =~ s/"$//;
-			$item[1] =~ s/\\\\\\\\/\\\\/;
-			$item[1] =~ s/\\\\"/"/; 
+		/"([^\\"]*(?:\\.[^\\"]*)*)"/
+		{ 	$item[1] =~ s/\\(.)/$1/;
 			$return = $item[1]; 1 }
-	|	/'(?:[^']|\\\\')*'/
-		{	$item[1] =~ s/^'//;
-			$item[1] =~ s/'$//;
-			$item[1] =~ s/\\\\\\\\/\\\\/;
-			$item[1] =~ s/\\\\'/'/; 
+	|	/'([^\\']*(?:\\.[^\\']*)*)'/
+		{ 	$item[1] =~ s/\\(.)/$1/;
 			$return = $item[1]; 1 }
 
 EOF:
 		/\Z/
-);
+EOGRAMMAR
 
 my $parser = Parse::RecDescent->new($grammar);
 
