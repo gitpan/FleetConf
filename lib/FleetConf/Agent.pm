@@ -9,7 +9,7 @@ use FleetConf::Agent::Context;
 use FleetConf::Agent::Parser;
 use FleetConf::Log;
 
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 
 =head1 NAME
 
@@ -215,9 +215,14 @@ sub _run_phase {
 
 	for my $command (@{ $tree->{commands} }) {
 		if ($command->can($phase)) {
-			my $ret = $command->$phase($ctx);
+			my $ret = eval { $command->$phase($ctx); };
 
-			$result &= $ret;
+			if ($@) {
+				$log->error("Error running $phase: $@");
+				$result = 0;
+			} else {
+				$result &= $ret;
+			}
 		}
 	}
 

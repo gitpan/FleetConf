@@ -1,6 +1,6 @@
 ---
 name: FleetConf
-version: 0.01_015
+version: 0.01_016
 author:
   - 'Andrew Sterling Hanenkamp, E<lt>hanenkamp@users.sourceforge.netE<gt>'
 abstract: 'An multi-agent, configuration management tool'
@@ -11,10 +11,10 @@ requires:
 provides:
   FleetConf:
     file: lib/FleetConf.pm
-    version: 0.01_015
+    version: 0.01_016
   FleetConf::Agent:
     file: lib/FleetConf/Agent.pm
-    version: 0.07
+    version: 0.08
   FleetConf::Agent::Context:
     file: lib/FleetConf/Agent/Context.pm
     version: 0.05

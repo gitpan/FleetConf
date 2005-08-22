@@ -6,7 +6,7 @@ use warnings;
 use File::Spec;
 use FleetConf::Log;
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 =head1 NAME
 
@@ -199,9 +199,9 @@ sub _run_it {
 
 			my $command_path = File::Spec->catfile($path, $command);
 
-			$log->notice("Testing for executable named '$command_path'.");
+			$log->debug("Testing for executable named '$command_path'.");
 			if (-f $command_path) {
-				$log->notice("Found executable named '$command_path'.");
+				$log->info("Found executable named '$command_path'.");
 				$command_line = qq("$command_path" $command_line);
 				$found++;
 				last;
@@ -219,14 +219,13 @@ sub _run_it {
 	my $output = `$command_line 2>&1`;
 	my $retval = $?;
 
-	unless ($ignore) {
-		$retval == 0
-			or $log->error("Program closed with error ",($retval/256),": '$command_line'");
+	unless ($ignore || $retval == 0) {
+		$log->error("Program closed with error ",($retval>>8),": '$command_line'");
 	}
 
 	$log->notice("Program output: ", $output);
 
-	return $retval == 0;
+	return $ignore || $retval == 0;
 }
 
 sub run {

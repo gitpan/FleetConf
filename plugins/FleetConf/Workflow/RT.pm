@@ -7,7 +7,7 @@ use Carp;
 use FleetConf::Log;
 use SOAP::Lite;
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 =head1 NAME
 
@@ -119,9 +119,14 @@ sub get {
 	} else {
 		my $cf = $self->{ticket}{CustomFields}{$key};
 		if ($cf && $cf->{id}) {
-			my $value = exists $self->{changes}{$key} ?
-				$self->{changes}{$key} : 
-				$self->{ticket}{CustomFieldValues}{$key};
+            my $value;
+            if (exists $self->{changes}{$key}) {
+                $value = $self->{changes}{$key};
+            } elsif ($self->{ticket}{CustomFieldValues}) {
+                $value = $self->{ticket}{CustomFieldValues}{$key};
+            } else {
+                $value = undef;
+            }
 
 			if ($cf->{MaxValues} == 0) {
 				return $value;
@@ -186,34 +191,20 @@ sub begin {
 	my $id = $self->{ticket}{id};
 
 	# We require a custom, multi-valued field named 'locks'
-	if ($self->{workflow}{service}->lockTicket($id, 'locks', $mnemonic)->result) {
-		$self->{ticket} = $self->{workflow}{service}->getTicket($id)->result;
-
-		if (!grep(/^$mnemonic$/, @{ $self->{ticket}{CustomFieldValues}{commits} })) {
-			# We took the lock and there is no commit, so we're good.
-			$self->{locked} = $mnemonic;
-			return 1;
-		} elsif ($force) {
-			# DANGER!!! We're assuming the lock even though a commit already
-			# exists!
-			warn "Lock '$mnemonic' is taken on #$self->{ticket}{id} despite an existing commit.";
-			return 1;
-		} else {
-			# We took the lock, but there's already a commit. Let's return no
-			# lock silently.
-			$log->notice("Lock '$mnemonic' already committed, not taking.");
-			$self->{workflow}{service}->unlockTicket($id, 'locks', $mnemonic);
-			return '';
-		}
+	if ($self->{workflow}{service}->lockTicket($id, 'locks', 'commits', $mnemonic)->result) {
+		$self->{locked} = $mnemonic;
+		return 1;
 	} elsif ($force) {
 		# DANGER!!! We're assuming the lock is ours without actually taking
 		# it. This could be useful if a process locked it, but never let
 		# go. We're going to whine, but pretent to take the lock.
 		warn "Lock '$mnemonic' is taken on #$self->{ticket}{id} despite failed lock attempt.";
+		$self->{locked} = $mnemonic;
 		return 1;
 	} else {
-		# Lock's taken, we'll whine and quit and tell them to go no further
-		warn "Failed to take lock '$mnemonic' on #$self->{ticket}{id}.";
+		# Lock's taken, we'll whine (quietly since this might be just that it's
+		# committed) and quit and tell them to go no further
+		$log->notice("Failed to take lock '$mnemonic' on #$self->{ticket}{id}.");
 		return '';
 	}
 }
@@ -224,28 +215,7 @@ sub commit {
 	$self->_check_lock;
 	
 	my $mnemonic = $self->{locked};
-
-	my %changes;
-	my $cf = $self->{ticket}{CustomFields}{commits};
-	if ($cf && $cf->{id}) {
-		$changes{"CustomField-".$cf->{id}."-AddValue"} = $mnemonic;
-	} else {
-		die "Cannot find the 'commits' field to commit to.";
-	}
-
-	if ($self->{erred}) {
-		$cf = $self->{ticket}{CustomFields}{errors};
-		if ($cf && $cf->{id}) {
-			$changes{"CustomField-".$cf->{id}."-AddValue"} = $mnemonic;
-		} else {
-			die "Cannot find the 'errors' field to commit an error to.";
-		}
-	}
-
-	$self->{workflow}{service}->modifyTicket(
-		id => $self->{ticket}{id},
-		%changes,
-	);
+	my $erred    = $self->{erred};
 
 	$self->log('error', "Error '$mnemonic'.") if $self->{erred};
 	$self->_flush_logs;
@@ -253,7 +223,7 @@ sub commit {
 
 	my $id = $self->{ticket}{id};
 
-	$self->{workflow}{service}->unlockTicket($id, 'locks', $mnemonic)->result
+	$self->{workflow}{service}->unlockTicket($id, 'locks', 'commits', 'errors', $mnemonic, $self->{erred})->result
 		or warn "Failed to release lock '$mnemonic'.";
 
 	delete $self->{locked};
@@ -272,7 +242,7 @@ sub rollback {
 	
 	my $id = $self->{ticket}{id};
 
-	$self->{workflow}{service}->unlockTicket($id, 'locks', $mnemonic)->result
+	$self->{workflow}{service}->unlockTicket($id, 'locks', 'commits', 'errors', $mnemonic, 0)->result
 		or warn "Failed to release lock '$mnemonic'.";
 
 	delete $self->{locked};

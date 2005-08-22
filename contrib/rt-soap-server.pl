@@ -41,7 +41,7 @@ use strict;
 
 use vars qw/$VERSION/;
 
-$VERSION = '0.2_003';
+$VERSION = '0.2_004';
 
 $SOAP::Constants::DO_NOT_USE_XML_PARSER = 1;
 
@@ -615,7 +615,8 @@ our $DEBUG = 1;
 sub lockTicket {
 	my $self = shift;
 	my $id = shift;
-	my $field = shift;
+	my $lock_field = shift;
+	my $commit_field = shift;
 	my $mnemonic = shift;
 	
 	$RT::Handle->BeginTransaction();
@@ -623,7 +624,15 @@ sub lockTicket {
 	my $ticket = RT::Ticket->new($CurrentUser);
 	$ticket->Load($id);
 
-	my $values = $ticket->CustomFieldValues($field);
+	my $values = $ticket->CustomFieldValues($lock_field);
+	while (my $value = $values->Next) {
+		if ($value->Content eq $mnemonic) {
+			$RT::Handle->Rollback();
+			return 0;
+		}
+	}
+
+	my $values = $ticket->CustomFieldValues($commit_field);
 	while (my $value = $values->Next) {
 		if ($value->Content eq $mnemonic) {
 			$RT::Handle->Rollback();
@@ -632,7 +641,7 @@ sub lockTicket {
 	}
 
 	my ($ret, $msg) = $ticket->AddCustomFieldValue(
-		Field => $field,
+		Field => $lock_field,
 		Value => $mnemonic,
 	);
 
@@ -648,21 +657,55 @@ sub lockTicket {
 sub unlockTicket {
 	my $self = shift;
 	my $id = shift;
-	my $field = shift;
+	my $lock_field = shift;
+	my $commit_field = shift;
+	my $error_field = shift;
 	my $mnemonic = shift;
+	my $is_error = shift;
+
+	$RT::Handle->BeginTransaction();
 
 	my $ticket = RT::Ticket->new($CurrentUser);
 	$ticket->Load($id);
 
-	my $cf = RT::CustomField->new($CurrentUser);
-	$cf->Load($field);
+	my $lock = RT::CustomField->new($CurrentUser);
+	$lock->Load($lock_field);
 
-	my ($ret, $msg) = $ticket->DeleteCustomFieldValue(
-		Field => $cf,
+	my $commit = RT::CustomField->new($CurrentUser);
+	$commit->Load($commit_field);
+
+	my $error = RT::CustomField->new($CurrentUser);
+	$error->Load($error_field);
+
+	my $success = 1;
+
+	my ($ret, $msg) = $ticket->AddCustomFieldValue(
+		Field => $commit,
 		Value => $mnemonic,
 	);
+	$success &= $ret;
 
-	return $ret;
+	if ($is_error) {
+		my ($ret, $msg) = $ticket->AddCustomFieldValue(
+			Field => $error,
+			Value => $mnemonic,
+		);
+		$success &= $ret;
+	}
+
+	my ($ret, $msg) = $ticket->DeleteCustomFieldValue(
+		Field => $lock,
+		Value => $mnemonic,
+	);
+	$success &= $ret;
+
+	if ($success) {
+		$RT::Handle->Commit();
+		return 1;
+	} else {
+		$RT::Handle->Rollback();
+		return 0;
+	}
 }
 
 

@@ -5,7 +5,7 @@ use warnings;
 
 use FleetConf::Log;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 =head1 NAME
 
@@ -56,7 +56,15 @@ sub run {
 	my $ctx     = shift;
 
 	$log->notice("Calling procedure '$self->{expr}' within namespace 'FleetConf::Commands'.");
-	return $self->{expr}->eval($ctx, 'FleetConf::Commands');
+	my $result = eval { $self->{expr}->eval($ctx, 'FleetConf::Commands') };
+
+	if ($@) {
+		$log->error("Precedure '$self->{expr}' within namepsace 'FleetConf::Commands' through an exception: $@");
+	} elsif (!$result) {
+		$log->error("Procedure '$self->{expr}' within namespace 'FleetConf::Commands' return error $result.");
+	}
+
+	return $result;
 }
 
 =head1 AUTHOR
